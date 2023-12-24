@@ -87,6 +87,10 @@ local RerollRemote = Bypass("RouterClient").get("QuestAPI/RerollQuest")
 
 local gameSettings = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/GameSettings.lua")))()
 local mouseClick = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/MouseClick.lua")))()
+
+Player.PlayerGui:WaitForChild("NewsApp")
+Player.PlayerGui:WaitForChild("DialogApp")
+
 local OnetimeConnections = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/OneTimeConnections.lua")))()
 
 
