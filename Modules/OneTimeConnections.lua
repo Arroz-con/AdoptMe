@@ -1,6 +1,6 @@
 local Player = game:GetService("Players").LocalPlayer
 
-local mouseClick = require("Modules.MouseClick")
+local mouseClick = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/MouseClick.lua")))()
 
 local NewsAppConnection
 
