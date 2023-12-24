@@ -85,9 +85,9 @@ local Bypass = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
 local ClaimRemote = Bypass("RouterClient").get("QuestAPI/ClaimQuest")
 local RerollRemote = Bypass("RouterClient").get("QuestAPI/RerollQuest")
 
-local gameSettings = require("Modules.GameSettings")
-local mouseClick = require("Modules.MouseClick")
-local OnetimeConnections = require("Modules.OnetimeConnections")
+local gameSettings = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/GameSettings.lua")))()
+local mouseClick = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/MouseClick.lua")))()
+local OnetimeConnections = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/OneTimeConnections.lua")))()
 
 Player.PlayerGui:WaitForChild("NewsApp")
 Player.PlayerGui:WaitForChild("DialogApp")
