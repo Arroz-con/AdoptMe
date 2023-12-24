@@ -4,6 +4,9 @@ local mouseClick = loadstring(game:HttpGet(("https://raw.githubusercontent.com/A
 
 local NewsAppConnection
 
+Player.PlayerGui:WaitForChild("NewsApp")
+Player.PlayerGui:WaitForChild("DialogApp")
+
 local Module = {}
 
 --// Main Adopt me Screen (Play! Button)

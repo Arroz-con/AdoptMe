@@ -89,8 +89,6 @@ local gameSettings = loadstring(game:HttpGet(("https://raw.githubusercontent.com
 local mouseClick = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/MouseClick.lua")))()
 local OnetimeConnections = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/OneTimeConnections.lua")))()
 
-Player.PlayerGui:WaitForChild("NewsApp")
-Player.PlayerGui:WaitForChild("DialogApp")
 
 gameSettings.Settings()
 
