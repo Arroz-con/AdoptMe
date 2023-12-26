@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game:GetService("Players").LocalPlayer
-
+local Bypass = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
+local inventoryDB = Bypass("InventoryDB")
 local PetCurrentlyFarming = nil
 
 local module = {}
