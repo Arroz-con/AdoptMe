@@ -56,309 +56,71 @@ if not game:IsLoaded() then
 end
 
 if game.PlaceId ~= 920587237 then return end
-local Player = game.Players.LocalPlayer
-local VI = game:GetService("VirtualInputManager")
-local UserGameSettings = UserSettings():GetService("UserGameSettings")
-
-
-local DialogConnection
-local RoleChooserDialogConnection
-local RobuxProductDialogConnection
-local banMessageConnection
-local DailyClaimConnection
-local ChatConnection
-local CharConn
-local DailyBoolean = true
-local DailyRewardTable = {[9] = "reward_1", [30] = "reward_2", [90] = "reward_3", [140] = "reward_4", [180] = "reward_5", [210] = "reward_6", [230] = "reward_7",
-[280] = "reward_8", [300] = "reward_9", [320] = "reward_10", [360] = "reward_11", [400] = "reward_12", [460] = "reward_13", [500] = "reward_14",
-[550] = "reward_15", [600] = "reward_16", [660] = "reward_17"}
-local DailyRewardTable2 = {[9] = "reward_1", [65] = "reward_2", [120] = "reward_3", [180] = "reward_4", [225] = "reward_5", [280] = "reward_6", [340] = "reward_7",
-[400] = "reward_8", [450] = "reward_9", [520] = "reward_10", [600] = "reward_11", [660] = "reward_12"}
-local NewTaskBool = true
-local NewClaimBool = true
-local NeonTable = {["neon_fusion"] = true, ["mega_neon_fusion"] = true}
-local ClaimTable = {["hatch_three_eggs"] = {3}, ["fully_age_three_pets"] = {3}, ["make_two_trades"] = {2}, ["equip_two_accessories"] = {2},
-["buy_three_furniture_items_with_friends_coop_budget"] = {3}, ["buy_five_furniture_items"] = {5}, ["buy_fifteen_furniture_items"] = {15},
-["play_as_a_baby_for_twenty_five_minutes"] = {1500}, ["play_for_thirty_minutes"] = {1800}}
-
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
 local Bypass = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
-local ClaimRemote = Bypass("RouterClient").get("QuestAPI/ClaimQuest")
-local RerollRemote = Bypass("RouterClient").get("QuestAPI/RerollQuest")
+local inventoryDB = Bypass("InventoryDB")
+local UserGameSettings = UserSettings():GetService("UserGameSettings")
+local Remote = Bypass("RouterClient").get("HousingAPI/ActivateFurniture")
+local VirtualUser = game:GetService("VirtualUser")
+
 
 local gameSettings = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/GameSettings.lua")))()
 local mouseClick = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/MouseClick.lua")))()
 
 Player.PlayerGui:WaitForChild("NewsApp")
 Player.PlayerGui:WaitForChild("DialogApp")
-
-local OnetimeConnections = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/OneTimeConnections.lua")))()
-
-
 gameSettings.Settings()
 
--- mouseClick.ClickGuiButton(v.Parent.Parent)
+-- calls it, dont delete it
+local OnetimeConnections = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/OneTimeConnections.lua")))()
+local taskboardQuest = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/TaskboardQuest.lua")))()
 
--- ChatConnection = Player.PlayerGui.Chat.Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.DescendantAdded:Connect(function(ChatChild)
--- 	if ChatChild.Name == "TextButton" then
--- 		task.wait(1)
--- 		firesignal(Player.PlayerGui.TopbarApp.TopBarContainer.ChatVisible.MouseButton1Click)
--- 		ChatConnection:Disconnect()
--- 	end
+local fusionPet = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/FusionPets.lua")))()
+local other = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Other.lua")))()
+local rarity = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Rarity.lua")))()
+
+
+
+-- Player.PlayerGui.DialogApp.Dialog.ChildAdded:Connect(function(NormalDialogChild)
+--     if NormalDialogChild.Name == "NormalDialog" then
+--         NormalDialogChild:GetPropertyChangedSignal("Visible"):Connect(function()
+--             if NormalDialogChild.Visible then
+--                 NormalDialogChild:WaitForChild("Info")
+--                 NormalDialogChild.Info:WaitForChild("TextLabel")
+--                 NormalDialogChild.Info.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
+--                     if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("4.5%% Legendary") then
+--                         FireButton("Okay")
+--                     end
+--                 end)
+--             end
+--         end)
+--     end
 -- end)
 
+-- Player.PlayerGui.DialogApp.Dialog.NormalDialog:GetPropertyChangedSignal("Visible"):Connect(function()
+--     if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Visible then
+--         Player.PlayerGui.DialogApp.Dialog.NormalDialog:WaitForChild("Info")
+--         Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info:WaitForChild("TextLabel")
+--         Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
+--             if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("4.5%% Legendary") then
+--                 FireButton("Okay")
+--             end
+--         end)
+--     end
+-- end)
 
-banMessageConnection = Player.PlayerGui.DialogApp.Dialog.NormalDialog:GetPropertyChangedSignal("Visible"):Connect(function()
-    if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Visible then
-        Player.PlayerGui.DialogApp.Dialog.NormalDialog:WaitForChild("Info")
-        Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info:WaitForChild("TextLabel")
-        Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
-            if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("ban") then
-                FireButton("Okay")
-                banMessageConnection:Disconnect()
-            end
-        end)
-    end
-end)
-
-if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Visible then
-    if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("ban") then
-        FireButton("Okay")
-        banMessageConnection:Disconnect()
-    end
-end
-
---// Clicks on baby button
-RoleChooserDialogConnection = Player.PlayerGui.DialogApp.Dialog.RoleChooserDialog:GetPropertyChangedSignal("Visible"):Connect(function()
-    task.wait()
-    if Player.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Visible then
-        firesignal(Player.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Baby.MouseButton1Click)
-        RoleChooserDialogConnection:Disconnect()
-    end
-end)
-
-if Player.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Visible then
-    firesignal(Player.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Baby.MouseButton1Click)
-    RoleChooserDialogConnection:Disconnect()
-end
-
---// Clicks no robux product button
-RobuxProductDialogConnection = Player.PlayerGui.DialogApp.Dialog.RobuxProductDialog:GetPropertyChangedSignal("Visible"):Connect(function()
-    task.wait()
-    if Player.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Visible then
-        for i, v in pairs(Player.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Buttons:GetDescendants()) do
-            if v.Name == "TextLabel" then
-                if  v.Text == "No Thanks" then
-                    mouseClick.ClickGuiButton(v.Parent.Parent) -- no thanks button
-                    DailyBoolean = false
-                    RobuxProductDialogConnection:Disconnect()
-                end
-            end
-        end     			
-    end
-end)
-
-local function GrabDailyReward()
-    local Daily = Bypass("ClientData").get("daily_login_manager")
-    if Daily.prestige % 2 == 0 then
-        for i, v in pairs(DailyRewardTable) do
-            if i < Daily.stars or i == Daily.stars then
-                if not Daily.claimed_star_rewards[v] then
-                    Bypass("RouterClient").get("DailyLoginAPI/ClaimStarReward"):InvokeServer(v)
-                end
-            end
-        end
-    else
-        for i, v in pairs(DailyRewardTable2) do
-            if i < Daily.stars or i == Daily.stars then
-                if not Daily.claimed_star_rewards[v] then
-                    Bypass("RouterClient").get("DailyLoginAPI/ClaimStarReward"):InvokeServer(v)
-                end
-            end
-        end
-    end
-end
-
-DailyClaimConnection = Player.PlayerGui.DailyLoginApp:GetPropertyChangedSignal("Enabled"):Connect(function()
-    repeat task.wait() until Player.PlayerGui.DailyLoginApp.Enabled
-    if Player.PlayerGui.DailyLoginApp.Enabled then
-        task.wait()
-        if Player.PlayerGui.DailyLoginApp.Frame.Visible then
-            for i, v in pairs(Player.PlayerGui.DailyLoginApp.Frame.Body.Buttons:GetDescendants()) do
-                if v.Name == "TextLabel" then
-                    if v.Text == "CLOSE" then
-                        clickGuiButton(v.Parent.Parent) -- Close button
-                        task.wait(1)
-                        GrabDailyReward()
-                        DailyClaimConnection:Disconnect()
-                    elseif v.Text == "CLAIM!" then
-                        clickGuiButton(v.Parent.Parent) -- claim button
-                        clickGuiButton(v.Parent.Parent) -- close button
-                        -- firesignal(v.Parent.Parent.MouseButton1Click) --claim button
-                        -- firesignal(v.Parent.Parent.MouseButton1Click) --close button
-                        task.wait(1)
-                        GrabDailyReward()
-                        DailyClaimConnection:Disconnect()
-                    end
-                end
-            end
-        end
-    end
-end)
-
-local Char = Player.Character or Player.CharacterAdded:Wait()
-CharConn = Char.ChildAdded:Connect(function(HRPChild)
-    if HRPChild.Name == "HumanoidRootPart" then
-        repeat task.wait() until not DailyBoolean
-        Bypass("RouterClient").get("TeamAPI/ChooseTeam"):InvokeServer("Babies", true)
-        CharConn:Disconnect()
-    end
-end)
+-- if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Visible then
+--     if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("4.5%% Legendary") then
+--         FireButton("Okay")
+--     end
+-- end
 
 
-
-Player.PlayerGui.DialogApp.Dialog.ChildAdded:Connect(function(NormalDialogChild)
-    if NormalDialogChild.Name == "NormalDialog" then
-        NormalDialogChild:GetPropertyChangedSignal("Visible"):Connect(function()
-            if NormalDialogChild.Visible then
-                NormalDialogChild:WaitForChild("Info")
-                NormalDialogChild.Info:WaitForChild("TextLabel")
-                NormalDialogChild.Info.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
-                    if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("4.5%% Legendary") then
-                        FireButton("Okay")
-                    end
-                end)
-            end
-        end)
-    end
-end)
-
-Player.PlayerGui.DialogApp.Dialog.NormalDialog:GetPropertyChangedSignal("Visible"):Connect(function()
-    if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Visible then
-        Player.PlayerGui.DialogApp.Dialog.NormalDialog:WaitForChild("Info")
-        Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info:WaitForChild("TextLabel")
-        Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
-            if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("4.5%% Legendary") then
-                FireButton("Okay")
-            end
-        end)
-    end
-end)
-
-if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Visible then
-    if Player.PlayerGui.DialogApp.Dialog.NormalDialog.Info.TextLabel.Text:match("4.5%% Legendary") then
-        FireButton("Okay")
-    end
-end
-
----\\Auto taskboard Quest
-local function QuestCount()
-    local Count = 0
-    for i, v in pairs(Bypass("ClientData").get("quest_manager")["quests_cached"]) do
-        if v["entry_name"]:match("teleport") or v["entry_name"]:match("navigate") or v["entry_name"]:match("nav") or v["entry_name"]:match("gosh_2022_sick") then
-            Count = Count + 0
-        else
-            Count = Count + 1
-        end
-    end
-    return Count
-end
-
-local function ReRollCount()
-    for i, v in pairs(Bypass("ClientData").get("quest_manager")["daily_quest_data"]) do
-        if v == 1 or v == 0 then
-            return v
-        end
-    end
-end
-
-local function NewTask()
-    NewTaskBool = false
-    for _, v in pairs(Bypass("ClientData").get("quest_manager")["quests_cached"]) do
-        if v["entry_name"]:match("teleport") or v["entry_name"]:match("navigate") or v["entry_name"]:match("nav") or v["entry_name"]:match("gosh_2022_sick") then
-            task.wait()
-        elseif v["entry_name"]:match("tutorial") then
-            ClaimRemote:InvokeServer(v["unique_id"])
-            task.wait()
-        else
-            if QuestCount() == 1 then
-                if NeonTable[v["entry_name"]] then
-                    ClaimRemote:InvokeServer(v["unique_id"])
-                    task.wait()
-                elseif not NeonTable[v["entry_name"]] and ReRollCount() >= 1 then
-                    RerollRemote:FireServer(v["unique_id"])
-                    task.wait()
-                end
-            elseif QuestCount() > 1 then
-                if NeonTable[v["entry_name"]] then
-                    ClaimRemote:InvokeServer(v["unique_id"])
-                    task.wait()
-                elseif not NeonTable[v["entry_name"]] and ReRollCount() >= 1 then
-                    RerollRemote:FireServer(v["unique_id"])
-                    task.wait()
-                elseif not NeonTable[v["entry_name"]] and ReRollCount() <= 0 then
-                    ClaimRemote:InvokeServer(v["unique_id"])
-                    task.wait()
-                end
-            end
-        end
-    end
-    task.wait(1)
-    NewTaskBool = true
-end
-
-local function NewClaim()
-    NewClaimBool = false
-    for _, v in pairs(Bypass("ClientData").get("quest_manager")["quests_cached"]) do
-        if ClaimTable[v["entry_name"]] then
-            if v["steps_completed"] == ClaimTable[v["entry_name"]][1] then
-                ClaimRemote:InvokeServer(v["unique_id"])
-                task.wait()
-            end
-        elseif not ClaimTable[v["entry_name"]] and v["steps_completed"] == 1 then
-            ClaimRemote:InvokeServer(v["unique_id"])
-            task.wait()
-        end
-    end
-    task.wait(1)
-    NewClaimBool = true
-end
-
-game.Players.LocalPlayer.PlayerGui.QuestIconApp.ImageButton.EventContainer.IsNew:GetPropertyChangedSignal("Position"):Connect(function()
-    if NewTaskBool then
-        NewTaskBool = false
-        Bypass("RouterClient").get("QuestAPI/MarkQuestsViewed"):FireServer()
-        NewTask()
-    end
-end)
-
-game.Players.LocalPlayer.PlayerGui.QuestIconApp.ImageButton.EventContainer.IsClaimable:GetPropertyChangedSignal("Position"):Connect(function()
-    if NewClaimBool then
-        NewClaimBool = false
-        NewClaim()
-    end
-end)
-
-
-NewClaim()
-task.wait()
-NewTask()
-
---// Spikes11 code ^^^
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local Bypass = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
-local inventoryDB = Bypass("InventoryDB")
-local Workspace = game:GetService("Workspace")
-local Remote = Bypass("RouterClient").get("HousingAPI/ActivateFurniture")
-local UserInputService = game:GetService("UserInputService")
-local VirtualUser = game:GetService("VirtualUser")
-
-local TradeButtons = Player.PlayerGui.DialogApp.Dialog.NormalDialog.Buttons
-local CheckMarkNF = Player.PlayerGui.TradeApp.Frame.NegotiationFrame.Body.PartnerOffer.Accepted
-local CheckMarkCF = Player.PlayerGui.TradeApp.Frame.ConfirmationFrame.PartnerOffer.Accepted
+-- local TradeButtons = Player.PlayerGui.DialogApp.Dialog.NormalDialog.Buttons
+-- local CheckMarkNF = Player.PlayerGui.TradeApp.Frame.NegotiationFrame.Body.PartnerOffer.Accepted
+-- local CheckMarkCF = Player.PlayerGui.TradeApp.Frame.ConfirmationFrame.PartnerOffer.Accepted
 local baitId
 local selectedPlayer
 
@@ -479,7 +241,6 @@ local function SetLocationFunc(a, b, c)
     set_thread_identity(k)
 end
 
-
 local pets_legendary = {}
 local pets_ultrarare = {}
 local pets_rare = {}
@@ -565,41 +326,6 @@ local function clipBoardInventory()
     setclipboard(allInventory)
 end
 
---// gets the trade license so you can trade legendarys
-local function getTradeLicense()
-    Bypass("RouterClient").get("SettingsAPI/SetBooleanFlag"):FireServer("has_talked_to_trade_quest_npc", true)
-    task.wait()
-    Bypass("RouterClient").get("TradeAPI/BeginQuiz"):FireServer()
-    task.wait(1)
-    for _, v in pairs(Bypass('ClientData').get("trade_license_quiz_manager")["quiz"]) do
-        Bypass("RouterClient").get("TradeAPI/AnswerQuizQuestion"):FireServer(v["answer"])
-    end
-end
-
---// completes the starter tutorial
-local function completeStarterTutorial()
-    Bypass("LegacyTutorial").cancel_tutorial()
-    Bypass("TutorialClient").cancel()
-    ReplicatedStorage.API["LegacyTutorialAPI/EquipTutorialEgg"]:FireServer()
-    ReplicatedStorage.API["LegacyTutorialAPI/AddTutorialQuest"]:FireServer()
-    ReplicatedStorage.API["LegacyTutorialAPI/AddHungryAilmentToTutorialEgg"]:FireServer()
-    local function feedStartEgg(SandwichPassOn)
-        local Foodid2
-        for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.food) do
-            if v.id == SandwichPassOn then
-                Foodid2 = v.unique
-                break
-            end
-        end
-        
-        ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(Foodid2, {["use_sound_delay"] = true})
-        task.wait(1)
-        ReplicatedStorage.API["PetAPI/ConsumeFoodItem"]:FireServer(Foodid2)
-    end
-
-    feedStartEgg("sandwich-default")
-    Bypass("RouterClient").get("TeamAPI/ChooseTeam"):InvokeServer("Babies", true)
-end
 
 -- buy the lure bait and place it
 local function buyLure()
@@ -662,7 +388,7 @@ end
 
 
 --local Pet_Farming
-local PetCurrentlyFarming
+local PetCurrentlyFarming = rarity.GetPetCurrentlyFarming()
 local Egg2Buy = SETTINGS.PET_TO_BUY
 local Gift2Buy = "winter_2023_hare_box"
 local Pet2Buy = SETTINGS.PET_TO_BUY -- ugc_refresh_2023_warthog   ugc_refresh_2023_ostrich
@@ -708,151 +434,6 @@ local function GetGiftPet()
 end
 
 
-local function getCommon(number)
-    local PetageCounter = number or 5
-    local isNeon = true
-    local petFound = false
-    while petFound == false do
-        task.wait()
-        for _, p in pairs(pets_common) do
-            for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-                if p == v.id and v.id ~= "practice_dog" and v.properties.age == PetageCounter and v.properties.neon == isNeon then
-                    ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(v.unique, {["use_sound_delay"] = true})
-                    PetCurrentlyFarming = v.unique
-                    return true
-                end
-            end
-        end
-        if petFound == false then
-            PetageCounter = PetageCounter - 1
-            if PetageCounter == 0 and isNeon == true then
-                PetageCounter = number or 5
-                isNeon = nil
-
-            elseif PetageCounter == 0 and isNeon == nil then
-                return false
-            end
-        end
-    end
-end
-
-local function getUnCommon(number)
-    local PetageCounter = number or 5
-    local isNeon = true
-    local petFound = false
-    while petFound == false do
-        task.wait()
-        for _, p in pairs(pets_uncommon) do
-            for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-                if p == v.id and v.id ~= "practice_dog" and  v.properties.age == PetageCounter and v.properties.neon == isNeon then
-                    ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(v.unique, {["use_sound_delay"] = true})
-                    PetCurrentlyFarming = v.unique
-                    return true
-                end
-            end
-        end
-        if petFound == false then
-            PetageCounter = PetageCounter - 1
-            if PetageCounter == 0 and isNeon == true then
-                PetageCounter = number or 5
-                isNeon = nil
-
-            elseif PetageCounter == 0 and isNeon == nil then
-                --getCommon()
-                return false
-            end
-        end
-    end
-end
-
-local function getRare(number)
-    local PetageCounter = number or 5
-    local isNeon = true
-    local petFound = false
-    while petFound == false do
-        task.wait()
-        for _, p in pairs(pets_rare) do
-            for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-                if p == v.id and v.id ~= "practice_dog" and v.properties.age == PetageCounter and v.properties.neon == isNeon then
-                    ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(v.unique, {["use_sound_delay"] = true})
-                    PetCurrentlyFarming = v.unique
-                    return true
-                end
-            end
-        end
-        if petFound == false then
-            PetageCounter = PetageCounter - 1
-            if PetageCounter == 0 and isNeon == true then
-                PetageCounter = number or 5
-                isNeon = nil
-
-            elseif PetageCounter == 0 and isNeon == nil then
-                --getUnCommon()
-                return false
-            end
-        end
-    end
-end
-
-
-local function getUltraRare(number)
-    local PetageCounter = number or 5
-    local isNeon = true
-    local petFound = false
-    while petFound == false do
-        task.wait()
-        for _, p in pairs(pets_ultrarare) do
-            for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-                if p == v.id and v.id ~= "practice_dog" and v.properties.age == PetageCounter and v.properties.neon == isNeon then
-                    ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(v.unique, {["use_sound_delay"] = true})
-                    PetCurrentlyFarming = v.unique
-                    return true
-                end
-            end
-        end
-        if petFound == false then
-            PetageCounter = PetageCounter - 1
-            if PetageCounter == 0 and isNeon == true then
-                PetageCounter = number or 5
-                isNeon = nil
-
-            elseif PetageCounter == 0 and isNeon == nil then
-                --getRare()
-                return false
-            end
-        end
-    end
-end
-
-
-local function getLegendary(number)
-    local PetageCounter = number or 5
-    local isNeon = true
-    local FoundLegendaryPet = false
-    while FoundLegendaryPet == false do
-        task.wait()
-        for _, p in pairs(pets_legendary) do
-            for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-                if p == v.id and v.id ~= "practice_dog" and v.properties.age == PetageCounter and v.properties.neon == isNeon then
-                    ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(v.unique, {["use_sound_delay"] = true})
-                    PetCurrentlyFarming = v.unique
-                    return true
-                end
-            end
-        end
-        if FoundLegendaryPet == false then
-            PetageCounter = PetageCounter - 1
-            if PetageCounter == 0 and isNeon == true then
-                PetageCounter = number or 5
-                isNeon = nil
-
-            elseif PetageCounter == 0 and isNeon == nil then
-                
-                return false
-            end
-        end
-    end  
-end
 
 local function priorityEgg()
     local found_pet = false
@@ -963,12 +544,12 @@ end
 
 local function getPet()
     if SETTINGS.FOCUS_FARM_AGE_POTION then
-        if getCommon(6) then return end
-        if getLegendary(6) then return end
-        if getUltraRare(6) then return end
-        if getRare(6) then return end
-        if getUnCommon(6) then return end
-        if getCommon(6) then return end
+        if rarity.GetPetRarity(pets_common, 6) then return end
+        if rarity.GetPetRarity(pets_legendary, 6) then return end
+        if rarity.GetPetRarity(pets_ultrarare, 6) then return end
+        if rarity.GetPetRarity(pets_rare, 6) then return end
+        if rarity.GetPetRarity(pets_uncommon, 6) then return end
+        if rarity.GetPetRarity(pets_common, 6) then return end
     end
 
     if SETTINGS.HATCH_EGG_PRIORITY then
@@ -987,7 +568,7 @@ local function getPet()
         if priorityPet() then return end
     end
 
-    if getLegendary() then return end
+    if rarity.GetPetRarity(pets_legendary, 5) then return end
 
     -- if #petsToAgeTable >= 1 then
     --     ReplicatedStorage.API["ToolAPI/Equip"]:InvokeServer(petsToAgeTable[1], {["use_sound_delay"] = true})
@@ -1005,10 +586,10 @@ local function getPet()
     -- end
 
 
-    if getUltraRare() then return end
-    if getRare() then return end
-    if getUnCommon() then return end
-    if getCommon() then return end
+    if rarity.GetPetRarity(pets_ultrarare, 5) then return end
+    if rarity.GetPetRarity(pets_rare, 5) then return end
+    if rarity.GetPetRarity(pets_uncommon, 5) then return end
+    if rarity.GetPetRarity(pets_common, 5) then return end
 
     -- if GetGiftPet() then
     --     task.wait(1)
@@ -1021,104 +602,6 @@ local function getPet()
 
     if getEgg() then return end
     -- if buyPet() then return end
-end
-
---// Makes pets neon
-local getFullGrown = {}
-local nameCount = {}
-local maketoneon = {}
-local maketoneonnow = {}
-
-local function MakeNeon()
-    repeat
-        table.clear(getFullGrown)
-        table.clear(nameCount)
-        table.clear(maketoneon)
-        table.clear(maketoneonnow)
-        for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-            if v.properties.age == 6 and not v.properties.neon and not v.properties.mega_neon then
-                table.insert(getFullGrown, v.id)
-                table.sort(getFullGrown)
-            end
-        end
-
-        for _, v in pairs(getFullGrown) do
-            local name = v
-            nameCount[name] = (nameCount[name] or 0) + 1
-        end
-
-        for name, count in pairs(nameCount) do
-            if count >= 4 then
-                table.insert(maketoneon, name)
-
-            end
-        end
-
-        local fullgrownCounter = 0
-        for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-            if v.id == maketoneon[1] and v.properties.age == 6 and not v.properties.neon and not v.properties.mega_neon then
-                table.insert(maketoneonnow, v.unique)
-                fullgrownCounter = fullgrownCounter + 1
-                if fullgrownCounter == 4 then
-                    fullgrownCounter = 0
-                    break
-                end
-            end
-        end
-
-        ReplicatedStorage.API:FindFirstChild("PetAPI/DoNeonFusion"):InvokeServer({unpack(maketoneonnow)})
-        task.wait(.1)
-    until
-        #maketoneon == 0  
-end
-
---// Makes pets mega neon
-local getFullGrown2 = {}
-local nameCount2 = {}
-local maketoneon2 = {}
-local maketoneonnow2 = {}
-
-local function MakeMegaNeon()
-    repeat
-        table.clear(getFullGrown2)
-        table.clear(nameCount2)
-        table.clear(maketoneon2)
-        table.clear(maketoneonnow2)
-        for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-            if v.properties.age == 6 and v.properties.neon then
-                table.insert(getFullGrown2, v.id)
-                table.sort(getFullGrown2)
-            end
-        end
-
-        for _, v in pairs(getFullGrown2) do
-            local name = v
-            nameCount2[name] = (nameCount2[name] or 0) + 1
-        end
-
-        for name, count in pairs(nameCount2) do
-            if count >= 4 then
-                table.insert(maketoneon2, name)
-            
-            end
-        end
-
-        local fullgrownCounter2 = 0
-        for _, v in pairs(require(ReplicatedStorage.ClientModules.Core.ClientData).get_data()[Player.Name].inventory.pets) do
-            if v.id == maketoneon2[1] and v.properties.age == 6 and v.properties.neon then
-                table.insert(maketoneonnow2, v.unique)
-                fullgrownCounter2 = fullgrownCounter2 + 1
-                if fullgrownCounter2 == 4 then
-                    fullgrownCounter2 = 0
-                    break
-                end
-            end
-        end
-
-        ReplicatedStorage.API:FindFirstChild("PetAPI/DoNeonFusion"):InvokeServer({unpack(maketoneonnow2)})
-        task.wait(.1)        
-    until
-        #maketoneon2 == 0  
 end
 
 
@@ -1486,8 +969,8 @@ local function autoFarm()
     Player.PlayerGui.HintApp.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
         if Player.PlayerGui.HintApp.TextLabel.Text:match("aged up!") then
             if SETTINGS.PET_AUTO_FUSION then
-                MakeNeon()
-                MakeMegaNeon()
+                fusionPet.MakeNeon()
+                fusionPet.MakeMegaNeon()
                 task.wait(2) -- gives it time for pet to fully equipped
             end
 
@@ -1618,8 +1101,8 @@ local function autoFarm()
 
     --// Code below runs once when auto farm is enabled
     if SETTINGS.PET_AUTO_FUSION then
-        MakeNeon()
-        MakeMegaNeon()
+        fusionPet.MakeNeon()
+        fusionPet.MakeMegaNeon()
     end
 
     getPet()
@@ -2172,14 +1655,14 @@ Farm:AddSection({
 Farm:AddButton({
     Name = "Make Neon",
     Callback = function(value)
-        MakeNeon()
+        fusionPet.MakeNeon()
     end    
 })
 
 Farm:AddButton({
     Name = "Make Mega-neon",
     Callback = function(value)
-        MakeMegaNeon()
+        fusionPet.MakeMegaNeon()
     end    
 })
 
@@ -2566,7 +2049,7 @@ local NewAlt = Window:MakeTab({
 NewAlt:AddButton({
     Name = "Complete Starter Tutorial",
     Callback = function()
-        completeStarterTutorial()
+        other.CompleteStarterTutorial()
     end
 })
 
@@ -2574,7 +2057,7 @@ NewAlt:AddButton({
 NewAlt:AddButton({
     Name = "Get Trade License",
     Callback = function()
-        getTradeLicense()
+        other.GetTradeLicense()
     end
 })
 
