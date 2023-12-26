@@ -60,7 +60,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local Bypass = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
-local inventoryDB = Bypass("InventoryDB")
+
 local UserGameSettings = UserSettings():GetService("UserGameSettings")
 local Remote = Bypass("RouterClient").get("HousingAPI/ActivateFurniture")
 local VirtualUser = game:GetService("VirtualUser")
@@ -79,6 +79,8 @@ local taskboardQuest = loadstring(game:HttpGet(("https://raw.githubusercontent.c
 
 local fusionPet = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/FusionPets.lua")))()
 local other = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Other.lua")))()
+local inventoryDB = Bypass("InventoryDB")
+local rarity = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Rarity.lua")))()
 
 
 
@@ -263,8 +265,6 @@ for u, pets in pairs(inventoryDB.pets) do
         table.insert(pets_eggs, u)
     end
 end
-
-local rarity = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Rarity.lua")))()
 
 
 local Pets_commonto_ultrarare = {}
