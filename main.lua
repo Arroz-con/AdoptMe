@@ -79,7 +79,6 @@ local taskboardQuest = loadstring(game:HttpGet(("https://raw.githubusercontent.c
 
 local fusionPet = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/FusionPets.lua")))()
 local other = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Other.lua")))()
-local rarity = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Rarity.lua")))()
 
 
 
@@ -248,6 +247,7 @@ local pets_uncommon = {}
 local pets_common = {}
 local pets_eggs = {}
 
+
 for u, pets in pairs(inventoryDB.pets) do
     if pets.rarity == "legendary" and not pets.is_egg then
         table.insert(pets_legendary, u)
@@ -263,6 +263,8 @@ for u, pets in pairs(inventoryDB.pets) do
         table.insert(pets_eggs, u)
     end
 end
+
+local rarity = loadstring(game:HttpGet(("https://raw.githubusercontent.com/Arroz-con/AdoptMe/main/Modules/Rarity.lua")))()
 
 
 local Pets_commonto_ultrarare = {}

@@ -5,7 +5,7 @@ local PetCurrentlyFarming = nil
 
 local module = {}
 
-function module.GetPetRarity(rarityTable: table, number: number)
+function module.GetPetRarity(rarityTable, number)
     local PetageCounter = number or 5
     local isNeon = true
     local petFound = false
